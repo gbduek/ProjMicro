@@ -3,12 +3,12 @@
 #include <PubSubClient.h>
 #include <Base64.h>
 
-const char* ssid = "YOUR_WIFI";
-const char* password = "YOUR_PASS";
+const char* ssid = "ssid";
+const char* password = "password";
 
 const char* mqtt_server = "test.mosquitto.org";
-const char* topic_photo = "projeto/camera/foto";
-const char* topic_data  = "projeto/camera/dados";
+const char* topic_photo = "/camera/foto";
+const char* topic_data  = "/camera/dados";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
