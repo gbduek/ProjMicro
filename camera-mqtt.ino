@@ -5,8 +5,8 @@
 #include <esp_camera.h>
 
 // ------------ SERIAL (ESP -> Arduino) -----------------
-#define RX_ESP 2   // Pino RX da UART2
-#define TX_ESP 4   // Pino TX da UART2
+#define RX_ESP 1   // Pino RX da UART2
+#define TX_ESP 2  // Pino TX da UART2
 HardwareSerial SerialESP(2);
 
 // ------------ MQTT ------------------------------------
@@ -14,31 +14,13 @@ WiFiClientSecure conexaoSegura;
 MQTTClient mqtt(200000);
 
 // ------------ CAMERA CONFIG ---------------------------
+// CAMERA CONFIG
 camera_config_t config = {
-  .pin_pwdn = -1, 
-  .pin_reset = -1, 
-  .pin_xclk = 15, 
-  .pin_sscb_sda = 4, 
-  .pin_sscb_scl = 5,
-
-  .pin_d7 = 16, 
-  .pin_d6 = 17, 
-  .pin_d5 = 18, 
-  .pin_d4 = 12,
-  .pin_d3 = 10, 
-  .pin_d2 = 8,
-  .pin_d1 = 9, 
-  .pin_d0 = 11,
-
-  .pin_vsync = 6, 
-  .pin_href = 7, 
-  .pin_pclk = 13,
-
+  .pin_pwdn = -1, .pin_reset = -1, .pin_xclk = 15, .pin_sscb_sda = 4, .pin_sscb_scl = 5,
+  .pin_d7 = 16, .pin_d6 = 17, .pin_d5 = 18, .pin_d4 = 12, .pin_d3 = 10, .pin_d2 = 8,
+  .pin_d1 = 9, .pin_d0 = 11, .pin_vsync = 6, .pin_href = 7, .pin_pclk = 13,
   .xclk_freq_hz = 20000000,
-
-  .ledc_timer = LEDC_TIMER_0, 
-  .ledc_channel = LEDC_CHANNEL_0,
-
+  .ledc_timer = LEDC_TIMER_0, .ledc_channel = LEDC_CHANNEL_0,
   .pixel_format = PIXFORMAT_JPEG,
   .frame_size = FRAMESIZE_SVGA,
   .jpeg_quality = 10,
@@ -168,14 +150,19 @@ void loop() {
     mqtt.publish("controle/arduino_resp", resp);
   }
 
+  if(Serial.available()) {
+    String inti = Serial.readStringUntil('\n');
+    SerialESP.println(inti);
+  }
+
   // Manter MQTT e WiFi vivos
   reconectarWiFi();
   reconectarMQTT();
   mqtt.loop();
 
   // FOTO a cada 10 segundos (se quiser manter)
-  if (millis() - ultimoEnvio > 10000) {
-    tirarFotoEEnviarParaMQTT();
-    ultimoEnvio = millis();
-  }
+  //if (millis() - ultimoEnvio > 10000) {
+  //  tirarFotoEEnviarParaMQTT();
+  //  ultimoEnvio = millis();
+  //}
 }
